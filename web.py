@@ -2,7 +2,6 @@ import warnings
 with warnings.catch_warnings():
   warnings.filterwarnings("ignore",category=FutureWarning)
 
-
 import numpy as np
 from PIL import Image
 from feature_extractor import FeatureExtractor
@@ -31,15 +30,16 @@ graph = tf.compat.v1.get_default_graph()
 init = tf.global_variables_initializer()
 sess.run(init)
 set_session(sess)
-model = load_model(dir_path+'/model/vgg19.h5')
-def predict(img):
+fe = FeatureExtractor()
+#model = load_model(dir_path+'/model/vgg19.h5')
+'''def predict(img):
   img = img.resize((224, 224))
   img = img.convert('RGB')
   x = image.img_to_array(img)
   x = np.expand_dims(x, axis=0)
   x = preprocess_input(x)
   feature = model.predict(x)[0]
-  return feature / np.linalg.norm(feature)
+  return feature / np.linalg.norm(feature)'''
 
 
 features = []
@@ -59,14 +59,12 @@ def index():
         img = Image.open(file.stream)
         uploaded_img_path = "static/upload/" + datetime.now().isoformat().replace(":", ".") + "_" + file.filename
         img.save(uploaded_img_path)
-
-        # Run search
         #fe = FeatureExtractor()
         #with g.as_default():
         #query = fe.extract(img)
         with graph.as_default():
           set_session(sess)
-          query = predict(img)
+          query = fe.extract(img)
         dists = np.linalg.norm(features-query, axis=1)
         ids = np.argsort(dists)[:30]
         scores = [(dists[id], img_paths[id]) for id in ids if dists[id] < 1.1]
@@ -79,4 +77,4 @@ def index():
 
 
 if __name__== "__main__":
-  app.run(port =5000)
+  app.run(port=5000)
