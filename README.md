@@ -10,7 +10,8 @@ run setup.py if new images are added
 
 To run the application 
 
- export FLASK_APP=web.py
- flask run
+ $export FLASK_APP=web.py
+ 
+ $flask run
  
  url : 127.0.0.1:5000
