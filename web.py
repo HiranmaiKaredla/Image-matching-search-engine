@@ -56,8 +56,7 @@ def index():
     if request.method == 'POST':
         file = request.files['query_img']
 
-        # Save query image
-        img = Image.open(file.stream)  # PIL image
+        img = Image.open(file.stream)
         uploaded_img_path = "static/upload/" + datetime.now().isoformat().replace(":", ".") + "_" + file.filename
         img.save(uploaded_img_path)
 
@@ -68,8 +67,8 @@ def index():
         with graph.as_default():
           set_session(sess)
           query = predict(img)
-        dists = np.linalg.norm(features-query, axis=1)  # L2 distances to features
-        ids = np.argsort(dists)[:30]  # Top 30 results
+        dists = np.linalg.norm(features-query, axis=1)
+        ids = np.argsort(dists)[:30]
         scores = [(dists[id], img_paths[id]) for id in ids if dists[id] < 1.1]
 
         return render_template('index.html',
